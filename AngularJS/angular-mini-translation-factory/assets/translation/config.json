@@ -1,0 +1,16 @@
+{
+    "available_languages": [
+        {
+            "id":         0,
+            "flag":       "us",
+            "lang":       "en",
+            "verbose":    "English"
+        },
+        {
+            "id":         1,
+            "flag":       "pl",
+            "lang":       "pl",
+            "verbose":    "Polski"
+        }
+    ]
+}

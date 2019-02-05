@@ -1,0 +1,26 @@
+{
+    "T01": {
+        "lang": {
+            "en": "Pigeon",
+            "pl": "Gołąb"
+        }
+    },
+    "T02": {
+        "lang": {
+            "en": "Dog",
+            "pl": "Pies"
+        }
+    },
+    "T03": {
+        "lang": {
+            "en": "Cat",
+            "pl": "Kot"
+        }
+    },
+    "T04": {
+        "lang": {
+            "en": "Lion",
+            "pl": "Lew"
+        }
+    }
+}

@@ -1,0 +1,1 @@
+powershell -Command "(New-Object Net.WebClient).DownloadFile('http://127.0.0.1/test.txt', 'test.txt')"

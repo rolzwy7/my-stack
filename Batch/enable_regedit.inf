@@ -1,0 +1,6 @@
+[version]
+signature="$CHICAGO$" 
+[DefaultInstall]
+DelReg = Del_DisableRegistryTools.Reg 
+[Del_DisableRegistryTools.Reg] 
+HKEY_CURRENT_USER, SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System, DisableRegistryTools

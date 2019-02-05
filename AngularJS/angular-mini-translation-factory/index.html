@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js" charset="utf-8"></script>
+        <title></title>
+    </head>
+    <script type="text/javascript">
+        var app = angular.module("ExampleApp", []);
+    </script>
+    <script src="./angular-translation.js" charset="utf-8"></script>
+    <body ng-app="ExampleApp">
+        <div ng-controller="ExampleController as Ctrl">
+            <img ng-src="{{translation_options.flag}}">
+            &emsp;
+            <select ng-change="changeLanguage(translation_options.chosen_language.id)" ng-options="item.verbose for item in translation_options.languages" ng-model="translation_options.chosen_language"></select>
+            <br>
+            <hr>
+            <p>{{t.T01}}</p>
+            <p>{{t.T02}}</p>
+            <p>{{t.T03}}</p>
+            <p>{{t.T04}}</p>
+        </div>
+    </body>
+    <script type="text/javascript">
+        app.controller("ExampleController", function($scope, Translation){
+
+
+            // Translation factory - start
+            $scope.changeLanguage = function(id, init=false) {
+                Translation.getConfig().then(function(response){
+                    var languages    = response.data.available_languages;
+                    var chosen_lang = (init) ? languages[0] : languages[id];
+                    var translation_options = {
+                        chosen_language:   chosen_lang,
+                        languages:         languages,
+                        flag:              Translation.getFlag(chosen_lang.flag)
+                    };
+                    Translation.getTranslations().then(function(result){
+                        var tresult = result.data;
+                        $scope.t = {};
+                        var objsk = Object.keys(tresult);
+                        for(var i=0;i<objsk.length;i++) {
+                            let tmp_translation = tresult[objsk[i]].lang[chosen_lang.lang];
+                            $scope.t[ objsk[i] ] = (tmp_translation !== undefined && tmp_translation !== "") ? tmp_translation: "{"+objsk[i]+" "+chosen_lang.verbose+" translation missing }";
+                        }
+                    }, function(reason){
+                        console.log(reason);
+                    });
+                    $scope.translation_options = translation_options;
+                }, function(response){
+                    console.log("Can't find config file", response);
+                });
+            };
+            $scope.changeLanguage(0, init=true);
+            // Translation factory - end
+
+        });
+    </script>
+</html>

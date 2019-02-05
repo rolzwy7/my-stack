@@ -1,0 +1,21 @@
+{
+  "name": "bootstrap4-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "auto-refresh": "node ./node_modules/browser-refresh/bin/browser-refresh"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.18.3",
+    "bootstrap": "4.1.2",
+    "browser-refresh": "1.7.3",
+    "express": "4.16.3",
+    "express-ejs-extend": "0.0.1",
+    "gulp": "3.9.1",
+    "gulp-sass": "4.0.1"
+  }
+}

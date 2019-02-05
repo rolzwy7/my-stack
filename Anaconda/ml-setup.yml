@@ -1,0 +1,7 @@
+name: mlp36
+channels:
+  - conda-forge
+  - pandas
+dependencies:
+  - python=3.6
+  - keras

