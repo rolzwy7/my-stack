@@ -1,0 +1,13 @@
+Informacje na temat kodowania liniowego:
+- kod ? (do zidentyfikowania)
+- amplituda dla kodu bez szumu - 1
+- wspo³czynnik nadprobkowania - 100 probek/bit
+
+Informacje na temat przesy³anej wiadomosci:
+- tekst 
+- do wys³ania jednego znaku wykorzystuje sie 9 bitow
+- bit LSB znaku wysy³any jest jako pierwszy
+
+
+Procedura zamiany z transmisji binarnej na znakowa:
+bity ----(bi2de)----> liczby (typu double) ----(char)----> znaki 
