@@ -1,14 +1,22 @@
-emmet
-
-Hydrogen
-
-minimap
-
+atom-visual-studio-code-light-ui
+atom-visual-studio-code-ui
+tool-bar
+flex-tool-bar
+git-plus
 monokai
-atom-file-icons
 
 linter
 linter-ui-default
 linter-pycodestyle
+intentions
+busy
+busy-signal
 
+autocomplete-python
 autocomplete-paths
+
+Hydrogen
+emmet
+minimap
+tabs-to-spaces
+pdf-view
