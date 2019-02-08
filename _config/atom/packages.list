@@ -16,6 +16,7 @@ autocomplete-python
 autocomplete-paths
 
 Hydrogen
+kite
 emmet
 minimap
 tabs-to-spaces

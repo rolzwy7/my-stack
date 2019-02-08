@@ -1,0 +1,1 @@
+﻿test_data\iris\iris_4x3.cnn --train-file=test_data\iris\iris_training.csv --eval-file=test_data\iris\iris_eval.csv --epochs=25000 --learning-rate=0.0015 --train
