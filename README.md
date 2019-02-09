@@ -19,4 +19,4 @@
 
 ## Other
 
-[Kite](https://kite.com)
+- [Kite](https://kite.com)
