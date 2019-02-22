@@ -1,6 +1,6 @@
 # Stack
 
-#### This is my repository for "code-snowballing" an it's mainly for personal reference.
+#### This is my repository for what I call "code-snowballing". It's mainly for personal reference but I'll keep it public anyway.
 
 ---
 
