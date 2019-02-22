@@ -1,5 +1,7 @@
 # Stack
 
+---
+
 ## Contents
 
 - [GitHub](#github)
