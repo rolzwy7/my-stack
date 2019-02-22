@@ -1,5 +1,7 @@
 # Stack
 
+#### This is my repository for "code-snowballing" an it's mainly for personal reference.
+
 ---
 
 ## Contents
