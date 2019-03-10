@@ -1,6 +1,6 @@
 /* Social Network - Test Script */
-DROP DATABASE mydb;
-CREATE DATABASE IF NOT EXISTS mydb
+DROP DATABASE IF EXISTS db_social_network;
+CREATE DATABASE IF NOT EXISTS db_social_network
   CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE mydb;
 
