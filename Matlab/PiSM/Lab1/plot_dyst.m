@@ -1,6 +1,6 @@
 % xi
 function [ ret_xi, ret_pi ] = plot_dyst( x_i, p_i )
-    step = 0.1;
+    step = 0.01;
     xi_0 = x_i(1);
     xi_N = x_i(end);
     

@@ -1,0 +1,79 @@
+# This file is used by Flex Tool Bar to create buttons on your Tool Bar.
+# For more information how to use this package and create your own buttons,
+#   read the documentation on https://atom.io/packages/flex-tool-bar
+
+[
+  {
+    type: "url"
+    text: "Py"
+    url: "https://docs.python.org/3.6/library/"
+    tooltip: "Python Docs"
+    style: {
+      font_size: "12px"
+    }
+  }
+  {
+    type: "url"
+    text: "C++"
+    url: "http://en.cppreference.com/"
+    tooltip: "C++ Reference"
+    style: {
+      font_size: "12px"
+    }
+  }
+  {
+    type: "spacer"
+  }
+  {
+    type: "button"
+    icon: "document"
+    callback: "application:new-file"
+    tooltip: "New File"
+    iconset: "ion"
+    mode: "dev"
+  }
+  {
+    type: "button"
+    icon: "columns"
+    iconset: "fa"
+    callback: ["pane:split-right", "pane:split-right"]
+  }
+  {
+    type: "button"
+    icon: "circuit-board"
+    callback: "git-diff:toggle-diff-list"
+    style:
+      color: "#FA4F28"
+    hover:
+      color: "#FA8F28"
+  }
+  {
+    type: "button"
+    icon: "markdown"
+    callback: "markdown-preview:toggle"
+    disable: "!markdown"
+  }
+  {
+    type: "button"
+    icon: "sitemap"
+    iconset: "fa"
+    className: "fa-rotate-180"
+    tooltip: "This is just an example it does nothing"
+  }
+  {
+    type: "file"
+    iconset: "fa"
+    icon: "book"
+    file: "README.md"
+    tooltip: "View Documentation"
+  }
+  {
+    type: "button"
+    icon: "list-unordered"
+    html: true
+    callback: "minimap:toggle"
+    show: {
+      package: "minimap"
+    }
+  }
+]
