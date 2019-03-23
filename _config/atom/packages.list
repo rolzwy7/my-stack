@@ -21,3 +21,5 @@ emmet
 minimap
 tabs-to-spaces
 pdf-view
+
+linter-mypy
