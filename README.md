@@ -1,16 +1,21 @@
 # Stack
 
-#### This is my repository for what I call "code-snowballing". It's mainly for personal reference but I'll keep it public anyway.
+#### This is my repository for personal reference.
 
 ---
 
 ## Contents
 
+- [Python](#python)
 - [GitHub](#github)
 - [Anaconda](#anaconda)
 - [Other](#other)
 
 ---
+
+## Python
+
+- [Python Std Library](https://docs.python.org/3.6/library/) - Python Standard Library
 
 ## GitHub
 
