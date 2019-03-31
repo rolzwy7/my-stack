@@ -1,3 +1,4 @@
+% Wyznaczanie charakterystyk zmiennej losowej
 clear; clc; close all;
 
 x_i = [-2, 2, 4];
