@@ -86,5 +86,5 @@ SHOW TABLES;
 
 
 ------ Example queries
----- Check which user has
+---- Check which user has the most likes
 -- SELECT username, SUM(likes) AS sum_likes FROM users JOIN posts ON users.id = posts.user_id GROUP BY username ORDER BY sum_likes DESC LIMIT 1;
