@@ -1,6 +1,4 @@
-X - RAM
-
-X < 2GB         -> 2 * RAM
-X - [2GB - 4GB) -> RAM + 2GB
-X - [6GB - 8GB) -> RAM
-X > 8GB         -> RAM * 1/2
+RAM < 2GB         -> 2 * RAM
+RAM - [2GB - 4GB) -> RAM + 2GB
+RAM - [6GB - 8GB) -> RAM
+RAM > 8GB         -> RAM * 1/2
