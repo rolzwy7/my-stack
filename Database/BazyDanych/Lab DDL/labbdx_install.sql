@@ -1,0 +1,886 @@
+DROP DATABASE IF EXISTS labbdx;
+CREATE DATABASE IF NOT EXISTS labbdx DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
+USE labbdx;
+
+GRANT ALL PRIVILEGES ON labbdx.* TO 'adminx'@'localhost' IDENTIFIED BY 'adminx';
+
+CREATE TABLE funkcje (
+	KOD_FUNKCJI char(3) NOT NULL ,
+	NAZWA_FUNKCJI char(30) NOT NULL
+);
+
+CREATE TABLE instytuty (
+	NR_INST smallint NOT NULL ,
+	NAZWA_INST char(30)
+);
+
+CREATE TABLE kierunki (
+	NR_KIER smallint NOT NULL ,
+	NAZWA_KIER char(30) NOT NULL ,
+	NR_INST smallint NOT NULL
+);
+
+CREATE TABLE oceny (
+	NR_STUD smallint NOT NULL ,
+	NR_PRZEDM smallint NOT NULL ,
+	DATA_ZAL datetime NOT NULL ,
+	TERMIN smallint NOT NULL ,
+	ZAL_EGZ char(1) NOT NULL ,
+	OCENA smallint NOT NULL
+);
+
+CREATE TABLE pracownicy (
+	NR_PRAC int NOT NULL ,
+	PLEC char(1) NOT NULL ,
+	DATA_UR datetime  ,
+	NAZWISKO char(15) ,
+	NR_ZESP smallint NOT NULL
+);
+
+CREATE TABLE przedmioty (
+	NR_PRZEDM smallint NOT NULL ,
+	NAZWA_PRZEDM char(40) NOT NULL ,
+	KOD_TPRZEDM char(3) NOT NULL ,
+	NR_PRZEDM_NADRZ smallint ,
+	NR_ODP_PRAC int NOT NULL ,
+	NR_KIER smallint NOT NULL
+);
+
+CREATE TABLE przydzialy (
+	NR_PRAC int NOT NULL ,
+	NR_TEM int NOT NULL ,
+	KOD_FUNKCJI char(3) NOT NULL
+);
+
+CREATE TABLE rozklady (
+	NR_SALI smallint NOT NULL ,
+	DZIEN char(3) NOT NULL ,
+	GODZINA smallint NOT NULL ,
+	NR_PRZEDM smallint NOT NULL ,
+	NR_PRAC int NOT NULL
+);
+
+CREATE TABLE sale (
+	NR_SALI smallint NOT NULL ,
+	ROZM_SALI smallint NOT NULL ,
+	EKRAN char(1) NOT NULL
+);
+
+CREATE TABLE studenci (
+	NR_STUD smallint NOT NULL ,
+	NAZWISKO char (20) NOT NULL ,
+	DATA_UR datetime NOT NULL ,
+	PLEC char(1) NOT NULL ,
+	NR_KIER smallint NOT NULL
+);
+
+CREATE TABLE tematy (
+	NR_TEM int NOT NULL ,
+	TEMAT char(30) NOT NULL ,
+	DATA_ROZP datetime ,
+	DATA_ODB datetime ,
+	NR_PRAC_KT int NOT NULL ,
+	NR_TEM_NADRZ int
+);
+
+CREATE TABLE typy_przedmiotow (
+	KOD_TPRZEDM char (3) NOT NULL ,
+	NAZWA_TPRZEDM char (50) NOT NULL
+);
+
+CREATE TABLE wyplaty (
+	NR_PRAC int NOT NULL ,
+	NR_TEM int NOT NULL ,
+	DATA_NALICZ datetime NOT NULL ,
+	DATA_WYPL datetime ,
+	KWOTA decimal(10, 1) NOT NULL
+);
+
+CREATE TABLE zespoly (
+	NR_ZESP smallint NOT NULL ,
+	NAZWA_ZESP char(30) NOT NULL ,
+	NR_PRAC_KZ int NOT NULL ,
+	NR_INST smallint NOT NULL
+);
+
+insert into funkcje values('ADM','Administrator ');
+insert into funkcje values('ANL','Analityk');
+insert into funkcje values('KRW','Kierownik ');
+insert into funkcje values('PRG','Programista ');
+insert into funkcje values('PRJ','Projektant');
+insert into funkcje values('TST','Tester');
+insert into instytuty values(1,'INFORMATYKI ');
+insert into instytuty values(2,'ELEKTRONIKI ');
+insert into instytuty values(3,'AUTOMATYKI');
+insert into instytuty values(4,'BUDOWNICTWA ');
+insert into instytuty values(5,'GORNICTWA ');
+insert into instytuty values(6,'HUTNICTWA ');
+insert into kierunki values(1,'OPROGRAMOWANIE',1);
+insert into kierunki values(2,'BUDOWA MC ',1);
+insert into kierunki values(3,'INFORMATYKA ',1);
+insert into kierunki values(4,'ELEKTRONIKA MED ',2);
+insert into kierunki values(5,'TECHNOLOGIA EL',2);
+insert into kierunki values(6,'ROBOTYKA',3);
+insert into kierunki values(7,'STEROWANIE PROC ',3);
+insert into kierunki values(8,'EUC ',3);
+insert into kierunki values(9,'GORNICTWA ODKRYWKOWEGO',4);
+insert into kierunki values(10,'RESTRUKTURYZACJI GORNICTWA',4);
+insert into oceny values(1,1,'1999-01-01',1,'E',5);
+insert into oceny values(2,1,'1999-01-04',1,'E',4);
+insert into oceny values(15,1,'2000-03-04',1,'E',4);
+insert into oceny values(23,1,'2000-06-06',1,'E',5);
+insert into oceny values(38,1,'2000-04-09',1,'E',3);
+insert into oceny values(38,1,'2000-05-05',1,'Z',4);
+insert into oceny values(53,1,'2000-07-08',1,'E',3);
+insert into oceny values(54,1,'2000-07-09',1,'E',3);
+insert into oceny values(63,1,'2000-01-07',1,'Z',4);
+insert into oceny values(63,1,'2000-02-07',1,'E',2);
+insert into oceny values(1,20,'2000-04-04',1,'E',5);
+insert into oceny values(2,20,'2000-05-04',1,'E',4);
+insert into oceny values(3,20,'2000-06-06',1,'E',4);
+insert into oceny values(4,20,'2000-07-07',1,'E',5);
+insert into oceny values(5,30,'2000-08-08',1,'E',5);
+insert into oceny values(6,30,'2000-04-09',1,'E',3);
+insert into oceny values(7,30,'2000-03-04',1,'E',4);
+insert into oceny values(8,30,'2000-05-05',1,'Z',4);
+insert into oceny values(8,30,'2000-06-06',1,'E',3);
+insert into oceny values(8,40,'2000-07-08',1,'E',3);
+insert into oceny values(9,40,'2000-07-09',1,'E',3);
+insert into oceny values(10,40,'2000-01-04',1,'Z',4);
+insert into oceny values(10,40,'2000-02-22',1,'E',4);
+insert into oceny values(10,40,'2000-03-17',2,'E',4);
+insert into oceny values(12,40,'2000-01-25',1,'E',2);
+insert into oceny values(21,40,'2000-08-09',1,'E',2);
+insert into oceny values(23,40,'2000-05-01',1,'E',5);
+insert into oceny values(27,40,'2000-07-08',1,'E',4);
+insert into oceny values(45,40,'2000-02-03',1,'E',5);
+insert into oceny values(9,50,'2000-02-07',1,'E',5);
+insert into oceny values(12,50,'2000-02-05',1,'E',3);
+insert into oceny values(13,50,'2000-02-16',1,'E',5);
+insert into oceny values(19,50,'2000-04-18',1,'E',4);
+insert into oceny values(20,50,'2000-04-16',1,'E',5);
+insert into oceny values(24,50,'2000-08-28',1,'E',4);
+insert into oceny values(41,50,'2000-05-03',1,'E',5);
+insert into oceny values(44,50,'2000-08-03',1,'E',3);
+insert into oceny values(48,50,'2000-07-25',1,'E',3);
+insert into oceny values(10,60,'2000-01-07',1,'E',5);
+insert into oceny values(11,60,'2000-03-14',1,'E',3);
+insert into oceny values(12,60,'2000-02-19',1,'E',5);
+insert into oceny values(13,60,'2000-03-17',1,'E',5);
+insert into oceny values(18,60,'2000-08-28',1,'E',2);
+insert into oceny values(18,60,'2000-09-24',2,'E',3);
+insert into oceny values(21,60,'2000-09-11',1,'E',3);
+insert into oceny values(33,60,'2000-04-21',1,'E',5);
+insert into oceny values(41,60,'2000-05-05',1,'E',4);
+insert into oceny values(44,60,'2000-03-04',1,'E',5);
+insert into oceny values(47,60,'2000-07-24',1,'E',4);
+insert into oceny values(10,70,'2000-01-12',1,'E',2);
+insert into oceny values(11,70,'2000-01-29',1,'E',2);
+insert into oceny values(11,70,'2000-07-09',2,'E',2);
+insert into oceny values(12,70,'2000-04-25',1,'E',4);
+insert into oceny values(15,70,'2000-01-11',1,'E',2);
+insert into oceny values(22,70,'2000-05-15',1,'E',2);
+insert into oceny values(32,70,'2000-03-05',1,'E',3);
+insert into oceny values(43,70,'2000-03-24',1,'E',4);
+insert into oceny values(49,70,'2000-08-16',1,'E',3);
+insert into oceny values(50,70,'2000-09-16',1,'E',4);
+insert into oceny values(10,80,'2000-05-05',1,'E',3);
+insert into oceny values(17,80,'2000-02-22',1,'E',4);
+insert into oceny values(21,80,'2000-04-15',1,'E',5);
+insert into oceny values(23,80,'2000-05-05',1,'E',4);
+insert into oceny values(26,80,'2000-06-08',1,'E',4);
+insert into oceny values(33,80,'2000-03-23',1,'E',4);
+insert into oceny values(10,90,'2000-01-18',1,'Z',3);
+insert into oceny values(10,90,'2000-04-28',1,'E',5);
+insert into oceny values(10,90,'2000-09-23',2,'E',3);
+insert into oceny values(14,90,'2000-01-15',1,'E',3);
+insert into oceny values(16,90,'2000-02-11',1,'E',4);
+insert into oceny values(19,90,'2000-04-17',1,'E',5);
+insert into oceny values(20,90,'2000-03-17',1,'E',2);
+insert into oceny values(10,100,'2000-08-08',1,'E',4);
+insert into oceny values(25,100,'2000-04-08',1,'E',3);
+insert into oceny values(28,100,'2000-08-18',1,'E',4);
+insert into oceny values(10,110,'2000-01-05',1,'Z',4);
+insert into oceny values(10,110,'2000-01-07',1,'E',3);
+insert into oceny values(10,110,'2000-04-23',2,'E',5);
+insert into oceny values(14,110,'2000-04-04',1,'E',4);
+insert into oceny values(34,110,'2000-03-01',1,'E',5);
+insert into oceny values(43,110,'2000-07-05',1,'E',3);
+insert into oceny values(48,110,'2000-05-04',1,'E',4);
+insert into oceny values(50,110,'2000-05-01',1,'Z',4);
+insert into oceny values(50,110,'2000-09-14',1,'E',3);
+insert into oceny values(50,110,'2000-09-16',2,'E',3);
+insert into pracownicy values(1,'M','1948-09-12','GRZYBEK',4);
+insert into pracownicy values(2,'K','1957-02-17','GRZYBIARZ',5);
+insert into pracownicy values(3,'M','1965-11-06','WIREK',6);
+insert into pracownicy values(4,'K','1959-10-07','JANECZEK ',5);
+insert into pracownicy values(5,'M','1961-03-15','TADECZEK ',4);
+insert into pracownicy values(6,'M','1949-09-17','PODWISLAK',3);
+insert into pracownicy values(7,'K','1947-08-19','WOJTECKA ',2);
+insert into pracownicy values(8,'K','1948-07-28','WUJEK',1);
+insert into pracownicy values(9,'K','1964-05-07','TRUMAN ',5);
+insert into pracownicy values(10,'K','1962-05-04','ZUBEK',2);
+insert into pracownicy values(11,'M','1956-04-10','SKRZYPEK ',5);
+insert into pracownicy values(12,'K','1968-11-03','POPKO',6);
+insert into pracownicy values(13,'M','1945-08-21','NOWY ',1);
+insert into pracownicy values(14,'K','1949-08-17','RAZOWA ',3);
+insert into pracownicy values(15,'K','1960-09-16','FULAK',4);
+insert into pracownicy values(16,'M','1953-09-13','KOTULA ',2);
+insert into pracownicy values(17,'M','1951-01-25','KULANEK',3);
+insert into pracownicy values(18,'M','1961-07-25','KULAWIK',6);
+insert into pracownicy values(19,'M','1958-05-08','SKOCZEK',5);
+insert into pracownicy values(20,'K','1952-11-04','WIEZYCKA ',1);
+insert into pracownicy values(21,'M','1953-02-23','BUJAK',3);
+insert into pracownicy values(22,'K','1947-05-09','BIERNAT',5);
+insert into pracownicy values(23,'M','1946-10-10','LUBELSKI ',1);
+insert into pracownicy values(24,'M','1963-11-03','IWAN ',2);
+insert into pracownicy values(25,'K','1959-03-17','JASKOLA',5);
+insert into pracownicy values(26,'K','1950-10-06','REBUS',3);
+insert into pracownicy values(27,'K','1947-04-09','REDOKS ',1);
+insert into pracownicy values(28,'K','1952-03-14','SKOREK ',4);
+insert into pracownicy values(29,'M','1955-10-11','KIPER',5);
+insert into pracownicy values(30,'K','1957-10-09','REPIK',2);
+insert into pracownicy values(31,'M','1964-11-11','NIEZALEZNY ',1);
+insert into pracownicy values(32,'M','1945-12-10','WILK ',3);
+insert into pracownicy values(33,'M','1934-10-05','MISIURA',4);
+insert into pracownicy values(34,'M','1954-09-04','KRAUS',5);
+insert into pracownicy values(35,'M','1934-12-25','WILCZEK',6);
+insert into pracownicy values(36,'M','1945-12-10','WILCZYNSKI ',7);
+insert into pracownicy values(37,'M','1934-10-05','GABKA',7);
+insert into pracownicy values(38,'M','1954-09-04','KRAK ',8);
+insert into pracownicy values(39,'M','1934-12-25','SZCZERBIEC ',8);
+insert into pracownicy values(40,'M','1984-10-05','PSTROWSKI',7);
+insert into pracownicy values(41,'M','1934-12-25','SZCZERBIEC ',8);
+insert into przedmioty values(1,'BAZY DANYCH ','WYK',null,1,1);
+insert into przedmioty values(2,'BAZY DANYCH ','LAB',1,21,1);
+insert into przedmioty values(20,'ARCHITEKTURA KOMPUTEROW ','WYK',40,4,1);
+insert into przedmioty values(30,'MODELOWANIE CYFROWE ','WYK',null,4,1);
+insert into przedmioty values(40,'PODSTAWY INFORMATYKI','WYK',null,1,1);
+insert into przedmioty values(50,'METODY NUMERYCZNE ','WYK',null,4,1);
+insert into przedmioty values(60,'ORACLE','WYK',1,22,1);
+insert into przedmioty values(70,'TABAKS','WYK',1,24,2);
+insert into przedmioty values(80,'AIPSK ','WYK',null,11,2);
+insert into przedmioty values(90,'ROZPROSZONE BAZY DANYCH ','WYK',null,2,2);
+insert into przedmioty values(100,'ANALIZA MATEMATYCZNA','WYK',null,3,2);
+insert into przedmioty values(110,'ALGEBRA ','WYK',null,1,2);
+insert into przydzialy values(1,1,'PRG');
+insert into przydzialy values(1,4,'ANL');
+insert into przydzialy values(1,5,'ADM');
+insert into przydzialy values(1,10,'ANL');
+insert into przydzialy values(1,11,'ADM');
+insert into przydzialy values(1,11,'PRG');
+insert into przydzialy values(1,11,'PRJ');
+insert into przydzialy values(1,13,'PRG');
+insert into przydzialy values(1,16,'ANL');
+insert into przydzialy values(1,21,'TST');
+insert into przydzialy values(1,25,'PRJ');
+insert into przydzialy values(1,33,'KRW');
+insert into przydzialy values(1,101,'ANL');
+insert into przydzialy values(1,101,'PRJ');
+insert into przydzialy values(1,103,'PRG');
+insert into przydzialy values(1,104,'ANL');
+insert into przydzialy values(1,104,'PRG');
+insert into przydzialy values(1,106,'KRW');
+insert into przydzialy values(1,107,'ANL');
+insert into przydzialy values(1,107,'PRJ');
+insert into przydzialy values(2,2,'PRJ');
+insert into przydzialy values(2,3,'PRJ');
+insert into przydzialy values(2,13,'PRG');
+insert into przydzialy values(2,15,'ANL');
+insert into przydzialy values(2,16,'PRG');
+insert into przydzialy values(2,18,'PRJ');
+insert into przydzialy values(2,101,'PRG');
+insert into przydzialy values(2,104,'PRG');
+insert into przydzialy values(2,104,'PRJ');
+insert into przydzialy values(2,105,'PRG');
+insert into przydzialy values(3,31,'ADM');
+insert into przydzialy values(3,31,'ANL');
+insert into przydzialy values(3,31,'PRG');
+insert into przydzialy values(3,31,'PRJ');
+insert into przydzialy values(4,3,'TST');
+insert into przydzialy values(4,5,'PRJ');
+insert into przydzialy values(4,6,'PRG');
+insert into przydzialy values(4,11,'ADM');
+insert into przydzialy values(4,25,'ANL');
+insert into przydzialy values(4,106,'ADM');
+insert into przydzialy values(4,106,'PRJ');
+insert into przydzialy values(5,2,'PRJ');
+insert into przydzialy values(5,3,'PRJ');
+insert into przydzialy values(5,13,'PRG');
+insert into przydzialy values(5,18,'ADM');
+insert into przydzialy values(5,18,'PRG');
+insert into przydzialy values(5,103,'PRJ');
+insert into przydzialy values(5,106,'PRG');
+insert into przydzialy values(6,5,'PRG');
+insert into przydzialy values(6,8,'ANL');
+insert into przydzialy values(6,8,'TST');
+insert into przydzialy values(6,10,'PRJ');
+insert into przydzialy values(6,17,'PRJ');
+insert into przydzialy values(6,21,'PRG');
+insert into przydzialy values(6,24,'TST');
+insert into przydzialy values(7,39,'PRG');
+insert into przydzialy values(7,39,'TST');
+insert into przydzialy values(8,6,'PRG');
+insert into przydzialy values(8,8,'ADM');
+insert into przydzialy values(8,13,'PRG');
+insert into przydzialy values(8,14,'ANL');
+insert into przydzialy values(8,16,'PRJ');
+insert into przydzialy values(8,22,'PRJ');
+insert into przydzialy values(8,28,'PRG');
+insert into przydzialy values(9,13,'PRJ');
+insert into przydzialy values(9,14,'ANL');
+insert into przydzialy values(9,18,'PRG');
+insert into przydzialy values(9,18,'TST');
+insert into przydzialy values(9,28,'PRG');
+insert into przydzialy values(9,104,'ADM');
+insert into przydzialy values(9,104,'PRG');
+insert into przydzialy values(9,107,'PRG');
+insert into przydzialy values(10,24,'KRW');
+insert into przydzialy values(10,101,'KRW');
+insert into przydzialy values(11,2,'PRJ');
+insert into przydzialy values(11,15,'KRW');
+insert into przydzialy values(11,18,'ANL');
+insert into przydzialy values(11,21,'KRW');
+insert into przydzialy values(11,102,'ANL');
+insert into przydzialy values(11,104,'PRG');
+insert into przydzialy values(11,105,'PRG');
+insert into przydzialy values(11,106,'ADM');
+insert into przydzialy values(12,3,'ADM');
+insert into przydzialy values(12,3,'PRG');
+insert into przydzialy values(12,4,'PRG');
+insert into przydzialy values(12,20,'ANL');
+insert into przydzialy values(12,20,'PRG');
+insert into przydzialy values(12,31,'PRG');
+insert into przydzialy values(12,40,'PRG');
+insert into przydzialy values(12,105,'PRJ');
+insert into przydzialy values(13,2,'PRJ');
+insert into przydzialy values(13,10,'PRJ');
+insert into przydzialy values(13,17,'PRG');
+insert into przydzialy values(13,21,'PRG');
+insert into przydzialy values(13,22,'ANL');
+insert into przydzialy values(13,28,'ANL');
+insert into przydzialy values(13,104,'TST');
+insert into przydzialy values(14,40,'ANL');
+insert into przydzialy values(15,6,'PRG');
+insert into przydzialy values(15,6,'PRJ');
+insert into przydzialy values(15,15,'ANL');
+insert into przydzialy values(15,20,'ANL');
+insert into przydzialy values(15,22,'ANL');
+insert into przydzialy values(15,31,'ANL');
+insert into przydzialy values(15,104,'ANL');
+insert into przydzialy values(15,106,'PRG');
+insert into przydzialy values(16,5,'PRG');
+insert into przydzialy values(16,10,'PRJ');
+insert into przydzialy values(16,13,'PRG');
+insert into przydzialy values(16,15,'TST');
+insert into przydzialy values(16,17,'PRJ');
+insert into przydzialy values(16,22,'TST');
+insert into przydzialy values(16,28,'PRJ');
+insert into przydzialy values(18,6,'ADM');
+insert into przydzialy values(18,8,'PRG');
+insert into przydzialy values(18,14,'ADM');
+insert into przydzialy values(18,17,'PRG');
+insert into przydzialy values(18,21,'ANL');
+insert into przydzialy values(18,32,'KRW');
+insert into przydzialy values(18,103,'ADM');
+insert into przydzialy values(18,105,'PRG');
+insert into przydzialy values(19,8,'PRG');
+insert into przydzialy values(19,18,'PRG');
+insert into przydzialy values(19,106,'TST');
+insert into przydzialy values(19,107,'ANL');
+insert into przydzialy values(20,3,'ANL');
+insert into przydzialy values(20,4,'TST');
+insert into przydzialy values(20,5,'PRG');
+insert into przydzialy values(20,6,'PRG');
+insert into przydzialy values(20,20,'PRJ');
+insert into przydzialy values(20,30,'PRJ');
+insert into przydzialy values(20,39,'ANL');
+insert into przydzialy values(20,42,'PRG');
+insert into przydzialy values(20,104,'ANL');
+insert into przydzialy values(20,106,'PRJ');
+insert into przydzialy values(21,8,'KRW');
+insert into przydzialy values(21,30,'KRW');
+insert into przydzialy values(21,42,'ANL');
+insert into przydzialy values(21,44,'KRW');
+insert into przydzialy values(22,3,'ANL');
+insert into przydzialy values(22,4,'PRG');
+insert into przydzialy values(22,11,'PRG');
+insert into przydzialy values(22,22,'PRG');
+insert into przydzialy values(22,25,'PRG');
+insert into przydzialy values(22,103,'PRG');
+insert into przydzialy values(23,14,'ANL');
+insert into przydzialy values(23,20,'PRG');
+insert into przydzialy values(23,28,'ANL');
+insert into przydzialy values(23,28,'PRJ');
+insert into przydzialy values(23,42,'KRW');
+insert into przydzialy values(23,43,'KRW');
+insert into przydzialy values(23,101,'PRG');
+insert into przydzialy values(23,104,'ANL');
+insert into przydzialy values(23,104,'PRJ');
+insert into przydzialy values(23,106,'PRG');
+insert into przydzialy values(25,1,'PRG');
+insert into przydzialy values(25,1,'PRJ');
+insert into przydzialy values(25,11,'PRG');
+insert into przydzialy values(25,16,'KRW');
+insert into przydzialy values(25,20,'ANL');
+insert into przydzialy values(25,22,'PRG');
+insert into przydzialy values(25,24,'ADM');
+insert into przydzialy values(25,39,'PRJ');
+insert into przydzialy values(25,102,'KRW');
+insert into przydzialy values(26,2,'PRJ');
+insert into przydzialy values(26,6,'PRG');
+insert into przydzialy values(26,10,'KRW');
+insert into przydzialy values(26,17,'PRG');
+insert into przydzialy values(26,17,'TST');
+insert into przydzialy values(26,24,'ADM');
+insert into przydzialy values(26,103,'PRG');
+insert into przydzialy values(26,106,'PRG');
+insert into przydzialy values(27,4,'ANL');
+insert into przydzialy values(27,15,'PRG');
+insert into przydzialy values(27,15,'TST');
+insert into przydzialy values(27,18,'ADM');
+insert into przydzialy values(27,22,'PRG');
+insert into przydzialy values(27,24,'ANL');
+insert into przydzialy values(27,25,'KRW');
+insert into przydzialy values(29,6,'KRW');
+insert into przydzialy values(29,8,'PRG');
+insert into przydzialy values(29,11,'KRW');
+insert into przydzialy values(29,16,'PRG');
+insert into przydzialy values(29,24,'PRJ');
+insert into przydzialy values(29,25,'PRJ');
+insert into przydzialy values(29,28,'KRW');
+insert into przydzialy values(29,102,'PRG');
+insert into przydzialy values(29,104,'PRG');
+insert into przydzialy values(30,4,'TST');
+insert into przydzialy values(30,10,'PRG');
+insert into przydzialy values(30,22,'PRG');
+insert into przydzialy values(30,24,'ADM');
+insert into przydzialy values(30,24,'PRG');
+insert into przydzialy values(30,40,'ANL');
+insert into przydzialy values(30,40,'PRG');
+insert into przydzialy values(30,104,'TST');
+insert into przydzialy values(30,105,'PRG');
+insert into przydzialy values(30,105,'TST');
+insert into przydzialy values(31,2,'PRG');
+insert into przydzialy values(31,13,'KRW');
+insert into przydzialy values(31,17,'PRJ');
+insert into przydzialy values(31,22,'KRW');
+insert into przydzialy values(31,31,'KRW');
+insert into przydzialy values(31,100,'KRW');
+insert into przydzialy values(32,1,'KRW');
+insert into przydzialy values(32,2,'KRW');
+insert into przydzialy values(32,5,'KRW');
+insert into przydzialy values(32,10,'PRG');
+insert into przydzialy values(32,18,'KRW');
+insert into przydzialy values(32,22,'PRG');
+insert into przydzialy values(32,39,'KRW');
+insert into przydzialy values(32,45,'KRW');
+insert into przydzialy values(32,107,'KRW');
+insert into przydzialy values(33,1,'PRJ');
+insert into przydzialy values(33,8,'PRG');
+insert into przydzialy values(33,18,'PRG');
+insert into przydzialy values(33,36,'KRW');
+insert into przydzialy values(33,103,'KRW');
+insert into przydzialy values(33,105,'KRW');
+insert into przydzialy values(34,3,'KRW');
+insert into przydzialy values(34,14,'KRW');
+insert into przydzialy values(34,20,'KRW');
+insert into przydzialy values(34,22,'PRJ');
+insert into przydzialy values(34,30,'TST');
+insert into przydzialy values(35,4,'KRW');
+insert into przydzialy values(35,10,'PRG');
+insert into przydzialy values(35,17,'KRW');
+insert into przydzialy values(35,104,'KRW');
+insert into przydzialy values(36,5,'PRG');
+insert into przydzialy values(36,10,'ANL');
+insert into przydzialy values(36,34,'KRW');
+insert into przydzialy values(36,37,'KRW');
+insert into przydzialy values(36,40,'PRG');
+insert into przydzialy values(36,40,'PRJ');
+insert into przydzialy values(37,10,'ANL');
+insert into przydzialy values(37,35,'KRW');
+insert into przydzialy values(37,38,'KRW');
+insert into przydzialy values(37,40,'ANL');
+insert into przydzialy values(37,101,'PRG');
+insert into przydzialy values(38,40,'KRW');
+insert into przydzialy values(38,41,'KRW');
+insert into przydzialy values(40,31,'PRG');
+insert into przydzialy values(41,31,'ADM');
+insert into rozklady values(1,'CZW',10,60,22);
+insert into rozklady values(1,'PON',12,1,1);
+insert into rozklady values(1,'WTO',12,60,34);
+insert into rozklady values(1,'WTO',16,110,1);
+insert into rozklady values(2,'PON',16,110,7);
+insert into rozklady values(2,'SRO',12,20,32);
+insert into rozklady values(2,'WTO',12,50,4);
+insert into rozklady values(2,'WTO',18,30,23);
+insert into rozklady values(3,'CZW',8,50,6);
+insert into rozklady values(3,'PON',8,20,12);
+insert into rozklady values(3,'PTK',16,1,20);
+insert into rozklady values(4,'PON',10,110,8);
+insert into rozklady values(4,'PON',14,70,28);
+insert into rozklady values(4,'SRO',8,20,4);
+insert into rozklady values(4,'WTO',10,90,2);
+insert into rozklady values(5,'SRO',10,30,12);
+insert into rozklady values(6,'SRO',12,70,24);
+insert into rozklady values(7,'PTK',10,80,11);
+insert into rozklady values(7,'WTO',12,1,21);
+insert into rozklady values(8,'CZW',10,20,22);
+insert into rozklady values(8,'PTK',8,90,10);
+insert into rozklady values(9,'PTK',14,80,11);
+insert into rozklady values(9,'WTO',8,1,33);
+insert into rozklady values(10,'WTO',12,30,4);
+insert into rozklady values(11,'CZW',10,100,3);
+insert into rozklady values(11,'PON',10,1,34);
+insert into rozklady values(12,'WTO',15,2,21);
+insert into rozklady values(15,'CZW',14,1,4);
+insert into rozklady values(16,'CZW',8,40,2);
+insert into rozklady values(16,'PON',10,40,1);
+insert into rozklady values(16,'SRO',10,100,6);
+insert into sale values(1,20,'T');
+insert into sale values(2,12,'T');
+insert into sale values(3,23,'T');
+insert into sale values(4,32,'T');
+insert into sale values(5,33,'N');
+insert into sale values(6,12,'N');
+insert into sale values(7,30,'N');
+insert into sale values(8,11,'N');
+insert into sale values(9,23,'N');
+insert into sale values(10,17,'N');
+insert into sale values(11,19,'N');
+insert into sale values(12,18,'N');
+insert into sale values(13,21,'N');
+insert into sale values(14,20,'N');
+insert into sale values(15,24,'N');
+insert into sale values(16,30,'N');
+insert into studenci values(1,'MARCZAK ','1968-09-13','M',2);
+insert into studenci values(2,'WALCZAK ','1969-06-02','K',3);
+insert into studenci values(3,'JANCZURA','1964-10-07','M',1);
+insert into studenci values(4,'KRAUS ','1968-05-03','M',1);
+insert into studenci values(5,'MISIURA ','1966-03-19','K',2);
+insert into studenci values(6,'WILK','1960-09-11','K',4);
+insert into studenci values(7,'KOT ','1962-08-19','K',1);
+insert into studenci values(8,'KOWALSKI','1963-07-28','M',1);
+insert into studenci values(9,'DORECKA ','1960-06-01','K',1);
+insert into studenci values(10,'DYBA','1969-09-12','M',1);
+insert into studenci values(11,'SIWEK ','1967-02-24','M',2);
+insert into studenci values(12,'CZARNY','1960-02-25','K',1);
+insert into studenci values(13,'BABIK ','1969-11-02','K',1);
+insert into studenci values(14,'RYNEK ','1965-04-14','M',2);
+insert into studenci values(15,'TUREK ','1968-04-13','K',3);
+insert into studenci values(16,'MAJAKOWSKI','1964-10-10','M',2);
+insert into studenci values(17,'MAJ ','1960-08-21','K',2);
+insert into studenci values(18,'DUZY','1963-03-18','M',1);
+insert into studenci values(19,'WASZUT','1969-07-22','M',3);
+insert into studenci values(20,'WIREK ','1965-11-06','M',4);
+insert into studenci values(21,'WALAS ','1967-07-24','M',3);
+insert into studenci values(22,'UNIK','1964-07-28','K',3);
+insert into studenci values(23,'UCHLIK','1963-10-08','M',3);
+insert into studenci values(24,'OPAS','1962-05-09','K',2);
+insert into studenci values(25,'SZAMOT','1964-01-27','K',3);
+insert into studenci values(26,'SOSNA ','1960-10-11','M',3);
+insert into studenci values(27,'POZNANSKI ','1964-03-17','M',2);
+insert into studenci values(28,'TURECKA ','1963-01-28','K',3);
+insert into studenci values(29,'PIOTRUS ','1961-10-10','M',2);
+insert into studenci values(30,'POPKO ','1968-11-03','K',2);
+insert into studenci values(31,'LIPECKI ','1967-05-04','M',1);
+insert into studenci values(32,'LISIECKA','1961-02-20','K',2);
+insert into studenci values(33,'LIS ','1961-04-10','K',1);
+insert into studenci values(34,'SIWACZEK','1962-04-09','K',2);
+insert into studenci values(35,'MODELAK ','1963-05-08','K',2);
+insert into studenci values(36,'JANIK ','1966-03-15','M',1);
+insert into studenci values(37,'KORUS ','1964-09-17','K',1);
+insert into studenci values(38,'STAWARZ ','1962-10-09','M',3);
+insert into studenci values(39,'DYDUCH','1962-02-19','M',1);
+insert into studenci values(40,'TRUMAN','1964-05-07','K',3);
+insert into studenci values(41,'MANIERAK','1965-09-16','K',2);
+insert into studenci values(42,'WILCZYNSKI','1961-08-20','M',3);
+insert into studenci values(43,'WARECKA ','1967-02-24','K',3);
+insert into studenci values(44,'UGASZ ','1960-02-21','M',3);
+insert into studenci values(45,'URGACZ','1961-03-20','K',3);
+insert into studenci values(46,'MICHAL','1966-01-25','M',2);
+insert into studenci values(47,'MOMATIUK','1967-11-04','M',2);
+insert into studenci values(48,'CZARNYNOGA','1965-01-26','M',1);
+insert into studenci values(49,'FILUT ','1966-09-15','M',1);
+insert into studenci values(50,'OKRASA','1968-02-23','K',2);
+insert into studenci values(51,'WAREK ','1953-10-08','M',5);
+insert into studenci values(52,'PANKRACY','1950-02-21','M',5);
+insert into studenci values(53,'MUZYKANT','1954-07-28','K',6);
+insert into studenci values(54,'PLASTUS ','1951-03-20','K',6);
+insert into studenci values(55,'REKSIK','1957-07-24','M',7);
+insert into studenci values(56,'FASOLA','1959-06-02','K',7);
+insert into studenci values(57,'KUCHCIK ','1957-02-24','K',8);
+insert into studenci values(58,'KICHUS','1959-07-22','M',8);
+insert into studenci values(59,'BAZGROLA','1973-08-20','M',9);
+insert into studenci values(60,'SZALEJ','1972-09-11','K',9);
+insert into studenci values(61,'MIKUS ','1971-07-24','M',10);
+insert into studenci values(62,'MILIONER','1970-06-02','K',10);
+insert into studenci values(63,'GLABIK','1954-07-28','K',6);
+insert into studenci values(64,'ZIMNY ','1951-03-20','K',6);
+insert into studenci values(65,'MILIONER','1971-07-24','K',10);
+insert into studenci values(66,'MILIONER','1970-06-02','K',10);
+insert into tematy values(1,'ADA SRODOWISKO','1990-01-01','1991-12-31',32,null);
+insert into tematy values(2,'ADA EDYTOR','1990-03-01','1990-12-31',33,1);
+insert into tematy values(3,'ADA KOMPILATOR','1990-09-01','1991-10-31',34,1);
+insert into tematy values(4,'PASCAL KOMPILATOR ','1983-03-21','1984-03-20',35,null);
+insert into tematy values(5,'BAZA DANYCH - SPOLEM','1987-04-20','1987-09-17',32,null);
+insert into tematy values(6,'BAZA DANYCH - PZU ','1986-03-10','1986-07-28',29,null);
+insert into tematy values(8,'PROCEDURY GRAFICZNE ','1992-04-24','1992-08-22',21,null);
+insert into tematy values(10,'PROJEKTOWANIE UKLADOW ','1983-12-11','1984-03-20',26,null);
+insert into tematy values(11,'ANALIZATOR WIDMA','1987-06-19','1987-11-16',29,null);
+insert into tematy values(13,'LISP - KOMPILATOR ','1985-01-08','1985-03-19',31,null);
+insert into tematy values(14,'PROLOG - KOMPILATOR ','1992-06-23','1992-08-22',34,null);
+insert into tematy values(15,'STEROWANIE GAZOCIAGIEM','1983-08-22','1983-11-10',11,null);
+insert into tematy values(16,'STEROWANIE TASMOCIAGIEM ','1984-02-09','1984-03-20',25,null);
+insert into tematy values(17,'STEROWNIK TURBINY W ELEKTROWNI','1987-08-18','1987-10-17',35,null);
+insert into tematy values(18,'KARTA EMULATORA PC','1986-07-08','1986-09-26',32,null);
+insert into tematy values(20,'GENERATOR SYGNALOW W.CZ.','1992-08-22','1992-11-20',34,null);
+insert into tematy values(21,'ANALIZATOR STANOW ','1983-10-21','1983-11-10',11,null);
+insert into tematy values(22,'KANAL WIZJI - OPROGRAMOWANIE','1984-04-09','1984-05-19',31,null);
+insert into tematy values(24,'CZUJNIK CISNIENIA ','1986-09-06','1986-10-26',10,null);
+insert into tematy values(25,'ANALIZATOR STEZENIA JONOW ','1985-05-08','1985-06-17',27,null);
+insert into tematy values(28,'WZMACNIACZ W.CZ.','1984-06-08','1984-12-15',29,null);
+insert into tematy values(30,'MONITOR ZNAKOWY ','1986-11-05','1986-11-25',21,null);
+insert into tematy values(31,'DYSK','1985-04-01','1985-08-09',31,null);
+insert into tematy values(32,'STEROWANIE REAKTOREM','1994-07-01','1994-03-03',18,null);
+insert into tematy values(33,'GUPTA ','1999-06-25','1999-02-15',1,null);
+insert into tematy values(34,'PRZETWARZANIE WEKTOROWE ','1986-12-15','1986-07-28',36,null);
+insert into tematy values(35,'PRZETWARZANIE ROWNOLEGLE','1985-08-16','1985-03-19',37,null);
+insert into tematy values(36,'PRZETWARZANIE ROZPROSZONE ','1993-01-29','1992-08-22',33,null);
+insert into tematy values(37,'ASSEMBLERY','1984-03-29','1983-10-11',36,null);
+insert into tematy values(38,'SYMULATOR ','1984-09-16','1984-03-20',37,null);
+insert into tematy values(39,'BEZPIECZENSTWO','1988-03-25','1988-06-13',32,null);
+insert into tematy values(40,'ODTWARZANIE ','1987-02-13','1987-06-23',38,null);
+insert into tematy values(41,'ARCHIWIZACJA','1985-07-10','1984-12-12',38,null);
+insert into tematy values(42,'SLABOPLATNY ','2000-06-18','2000-07-08',23,null);
+insert into tematy values(43,'ZEROWY','2000-06-28','1999-11-11',23,null);
+insert into tematy values(44,'KANALY WIZJI','1984-06-07','1983-10-11',21,null);
+insert into tematy values(45,'KARTA MONITORA','1985-11-24','1985-03-19',32,null);
+insert into tematy values(100,'ZESTAW KOMPUTEROWY','1985-01-01','1988-10-31',31,null);
+insert into tematy values(101,'KARTA PROCESORA ','1988-10-15','1989-01-13',10,100);
+insert into tematy values(102,'MONITOR GRAFICZNY ','1987-06-17','1987-07-07',25,100);
+insert into tematy values(103,'GENERATOR DZWIEKU ','1987-06-27','1987-08-06',33,100);
+insert into tematy values(104,'STEROWNIK DYSKU ','1990-01-04','1990-03-05',35,100);
+insert into tematy values(105,'KARTA MONITORA GRAFICZNEGO','1991-02-28','1991-04-19',33,100);
+insert into tematy values(106,'MODUL I/O ','1988-02-18','1988-03-29',1,100);
+insert into tematy values(107,'ZASILACZ','1990-02-03','1990-03-05',32,100);
+insert into typy_przedmiotow values('CWC','�wiczenia ');
+insert into typy_przedmiotow values('LAB','Laboratorium');
+insert into typy_przedmiotow values('PRJ','Projekt ');
+insert into typy_przedmiotow values('SMN','Seminarium');
+insert into typy_przedmiotow values('WYK','Wyk�ad');
+insert into wyplaty values(1,1,'1990-01-16','1990-01-17',420.0);
+insert into wyplaty values(1,4,'1983-04-05','1983-04-06',320.0);
+insert into wyplaty values(1,5,'1987-05-05','1987-05-06',490.0);
+insert into wyplaty values(1,10,'1983-12-26','1983-12-27',330.0);
+insert into wyplaty values(1,11,'1987-07-04','1987-07-05',340.0);
+insert into wyplaty values(1,11,'1987-09-04','1987-09-05',790.0);
+insert into wyplaty values(1,11,'1987-11-04','1987-11-05',230.0);
+insert into wyplaty values(1,13,'1985-01-23','1985-01-24',1310.0);
+insert into wyplaty values(1,16,'1984-02-24','1984-02-25',830.0);
+insert into wyplaty values(1,21,'1983-11-05','1983-11-06',610.0);
+insert into wyplaty values(1,25,'1985-05-23','1985-05-24',460.0);
+insert into wyplaty values(1,101,'1988-10-30','1988-10-31',610.0);
+insert into wyplaty values(1,101,'1988-12-30','1988-12-31',760.0);
+insert into wyplaty values(1,103,'1987-07-12','1987-07-13',780.0);
+insert into wyplaty values(1,104,'1990-01-19','1990-01-20',560.0);
+insert into wyplaty values(1,104,'1990-03-19','1990-03-20',310.0);
+insert into wyplaty values(1,107,'1990-02-18','1990-02-19',270.0);
+insert into wyplaty values(1,107,'1990-04-18','1990-04-19',260.0);
+insert into wyplaty values(2,2,'1990-03-16','1990-03-17',600.0);
+insert into wyplaty values(2,3,'1990-09-16','1990-09-17',420.0);
+insert into wyplaty values(2,13,'1985-01-23','1985-01-24',200.0);
+insert into wyplaty values(2,15,'1983-09-06','1983-09-07',310.0);
+insert into wyplaty values(2,16,'1984-02-24','1984-02-25',510.0);
+insert into wyplaty values(2,18,'1986-07-23','1986-07-24',270.0);
+insert into wyplaty values(2,101,'1988-10-30','1988-10-31',260.0);
+insert into wyplaty values(2,104,'1990-01-19','1990-01-20',560.0);
+insert into wyplaty values(2,104,'1990-03-19','1990-03-20',390.0);
+insert into wyplaty values(2,105,'1991-03-15','1991-03-16',460.0);
+insert into wyplaty values(3,31,'1985-04-16','1985-04-17',760.0);
+insert into wyplaty values(3,31,'1985-04-17','1985-04-18',610.0);
+insert into wyplaty values(3,31,'1985-06-16','1985-06-17',230.0);
+insert into wyplaty values(3,31,'1985-07-16','1985-07-17',990.0);
+insert into wyplaty values(4,3,'1990-09-16','1990-09-17',440.0);
+insert into wyplaty values(4,5,'1987-05-05','1987-05-06',620.0);
+insert into wyplaty values(4,6,'1986-03-25','1986-03-26',790.0);
+insert into wyplaty values(4,11,'1987-07-04','1987-07-05',300.0);
+insert into wyplaty values(4,25,'1985-05-23','1985-05-24',730.0);
+insert into wyplaty values(4,106,'1988-03-04','1988-03-05',870.0);
+insert into wyplaty values(4,106,'1988-06-04','1988-06-05',830.0);
+insert into wyplaty values(5,2,'1990-03-16','1990-03-17',200.0);
+insert into wyplaty values(5,3,'1990-09-16','1990-09-17',330.0);
+insert into wyplaty values(5,13,'1985-01-23','1985-01-24',560.0);
+insert into wyplaty values(5,18,'1986-07-23','1986-07-24',420.0);
+insert into wyplaty values(5,18,'1986-09-23','1986-09-24',390.0);
+insert into wyplaty values(5,103,'1987-07-12','1987-07-13',310.0);
+insert into wyplaty values(5,106,'1988-03-04','1988-03-05',250.0);
+insert into wyplaty values(6,5,'1987-05-05','1987-05-06',760.0);
+insert into wyplaty values(6,8,'1992-05-09','1992-05-10',340.0);
+insert into wyplaty values(6,8,'1992-07-09','1992-07-10',450.0);
+insert into wyplaty values(6,10,'1983-12-26','1983-12-27',220.0);
+insert into wyplaty values(6,17,'1987-09-02','1987-09-03',640.0);
+insert into wyplaty values(6,21,'1983-11-05','1983-11-06',780.0);
+insert into wyplaty values(6,24,'1986-09-21','1986-09-22',610.0);
+insert into wyplaty values(7,39,'1988-04-09','1988-04-10',160.0);
+insert into wyplaty values(7,39,'1988-06-09','1988-06-10',110.0);
+insert into wyplaty values(8,6,'1986-03-25','1986-03-26',280.0);
+insert into wyplaty values(8,8,'1992-05-09','1992-05-10',880.0);
+insert into wyplaty values(8,13,'1985-01-23','1985-01-24',870.0);
+insert into wyplaty values(8,14,'1992-07-08','1992-07-09',730.0);
+insert into wyplaty values(8,16,'1984-02-24','1984-02-25',270.0);
+insert into wyplaty values(8,22,'1984-04-24','1984-04-25',300.0);
+insert into wyplaty values(8,28,'1984-06-23','1984-06-24',270.0);
+insert into wyplaty values(9,13,'1985-01-23','1985-01-24',44230.0);
+insert into wyplaty values(9,14,'1992-07-08','1992-07-09',540.0);
+insert into wyplaty values(9,18,'1986-07-23','1986-07-24',200.0);
+insert into wyplaty values(9,18,'1986-09-23','1986-09-24',420.0);
+insert into wyplaty values(9,28,'1984-06-23','1984-06-24',330.0);
+insert into wyplaty values(9,104,'1990-01-19','1990-01-20',830.0);
+insert into wyplaty values(9,104,'1990-06-19','1990-06-20',390.0);
+insert into wyplaty values(9,107,'1990-02-18','1990-02-19',250.0);
+insert into wyplaty values(11,2,'1990-03-16','1990-03-17',390.0);
+insert into wyplaty values(11,15,'1983-09-06','1983-09-07',540.0);
+insert into wyplaty values(11,18,'1986-07-23','1986-07-24',440.0);
+insert into wyplaty values(11,102,'1987-07-02','1987-07-03',790.0);
+insert into wyplaty values(11,104,'1990-01-19','1990-01-20',830.0);
+insert into wyplaty values(11,105,'1991-03-15','1991-03-16',250.0);
+insert into wyplaty values(11,106,'1988-03-04','1988-03-05',330.0);
+insert into wyplaty values(12,3,'1990-09-16','1990-09-17',7000.0);
+insert into wyplaty values(12,3,'1990-11-16','1990-11-17',230.0);
+insert into wyplaty values(12,4,'1983-04-05','1983-04-06',450.0);
+insert into wyplaty values(12,20,'1992-09-06','1992-09-07',220.0);
+insert into wyplaty values(12,20,'1992-11-06','1992-11-07',760.0);
+insert into wyplaty values(12,31,'1985-04-16','1985-04-17',450.0);
+insert into wyplaty values(12,40,'1987-02-28','1987-03-01',2230.0);
+insert into wyplaty values(12,105,'1991-03-15','1991-03-16',590.0);
+insert into wyplaty values(13,2,'1990-03-16',null,770.0);
+insert into wyplaty values(13,10,'1983-12-26','1983-12-27',850.0);
+insert into wyplaty values(13,17,'1987-09-02','1987-09-03',340.0);
+insert into wyplaty values(13,21,'1983-11-05','1983-11-06',710.0);
+insert into wyplaty values(13,22,'1984-04-24','1984-04-25',220.0);
+insert into wyplaty values(13,28,'1984-06-23','1984-06-24',640.0);
+insert into wyplaty values(13,104,'1990-01-19',null,560.0);
+insert into wyplaty values(14,40,'1987-02-28','1987-03-01',2610.0);
+insert into wyplaty values(15,6,'1986-03-25','1986-03-26',700.0);
+insert into wyplaty values(15,6,'1986-07-25','1986-07-26',290.0);
+insert into wyplaty values(15,15,'1983-09-06','1983-09-07',480.0);
+insert into wyplaty values(15,20,'1992-09-06','1992-09-07',510.0);
+insert into wyplaty values(15,22,'1984-04-24','1984-04-25',400.0);
+insert into wyplaty values(15,31,'1985-04-16','1985-04-17',1000.0);
+insert into wyplaty values(15,104,'1990-01-19','1990-01-20',580.0);
+insert into wyplaty values(15,106,'1988-03-04','1988-03-05',810.0);
+insert into wyplaty values(16,5,'1987-05-05','1987-05-06',280.0);
+insert into wyplaty values(16,10,'1983-12-26','1983-12-27',610.0);
+insert into wyplaty values(16,13,'1985-01-23','1985-01-24',880.0);
+insert into wyplaty values(16,15,'1983-09-06','1983-09-07',590.0);
+insert into wyplaty values(16,17,'1987-09-02','1987-09-03',270.0);
+insert into wyplaty values(16,22,'1984-04-24','1984-04-25',250.0);
+insert into wyplaty values(16,28,'1984-06-23','1984-06-24',230.0);
+insert into wyplaty values(18,6,'1986-03-25','1986-03-26',300.0);
+insert into wyplaty values(18,8,'1992-05-09','1992-05-10',880.0);
+insert into wyplaty values(18,14,'1992-07-08','1992-07-09',270.0);
+insert into wyplaty values(18,17,'1987-09-02','1987-09-03',250.0);
+insert into wyplaty values(18,21,'1983-11-05','1983-11-06',230.0);
+insert into wyplaty values(18,103,'1987-07-12','1987-07-13',280.0);
+insert into wyplaty values(18,105,'1991-03-15','1991-03-16',270.0);
+insert into wyplaty values(19,8,'1992-05-09','1992-05-10',440.0);
+insert into wyplaty values(19,18,'1986-07-23','1986-07-24',870.0);
+insert into wyplaty values(19,106,'1988-03-04','1988-03-05',540.0);
+insert into wyplaty values(19,107,'1990-02-18','1990-02-19',620.0);
+insert into wyplaty values(20,3,'1990-09-16','1990-09-17',480.0);
+insert into wyplaty values(20,4,'1983-04-05','1983-04-06',770.0);
+insert into wyplaty values(20,5,'1987-05-05','1987-05-06',810.0);
+insert into wyplaty values(20,6,'1986-03-25','1986-03-26',580.0);
+insert into wyplaty values(20,20,'1992-09-06','1992-09-07',400.0);
+insert into wyplaty values(20,30,'1986-11-20','1986-11-21',250.0);
+insert into wyplaty values(20,39,'1988-04-09','1988-04-10',230.0);
+insert into wyplaty values(20,42,'2000-07-03','2000-07-04',50.0);
+insert into wyplaty values(20,104,'1990-01-19','1990-01-20',710.0);
+insert into wyplaty values(20,106,'1988-03-04','1988-03-05',290.0);
+insert into wyplaty values(21,42,'2000-07-03','2000-07-04',40.0);
+insert into wyplaty values(22,3,'1990-09-16','1990-09-17',300.0);
+insert into wyplaty values(22,4,'1983-04-05','1983-04-06',790.0);
+insert into wyplaty values(22,11,'1987-07-04','1987-07-05',880.0);
+insert into wyplaty values(22,22,'1984-04-24','1984-04-25',730.0);
+insert into wyplaty values(22,25,'1985-05-23','1985-05-24',620.0);
+insert into wyplaty values(22,103,'1987-07-12','1987-07-13',870.0);
+insert into wyplaty values(23,14,'1992-07-08','1992-07-09',700.0);
+insert into wyplaty values(23,20,'1992-09-06','1992-09-07',490.0);
+insert into wyplaty values(23,28,'1984-06-23','1984-06-24',320.0);
+insert into wyplaty values(23,28,'1984-11-23','1984-11-24',460.0);
+insert into wyplaty values(23,101,'1988-10-30','1988-10-31',290.0);
+insert into wyplaty values(23,104,'1990-01-19','1990-01-20',510.0);
+insert into wyplaty values(23,104,'1990-06-19','1990-06-20',260.0);
+insert into wyplaty values(23,106,'1988-03-04','1988-03-05',400.0);
+insert into wyplaty values(25,1,'1990-01-16','1990-01-17',850.0);
+insert into wyplaty values(25,1,'1990-11-16','1990-11-17',760.0);
+insert into wyplaty values(25,11,'1987-07-04','1987-07-05',450.0);
+insert into wyplaty values(25,16,'1984-02-24','1984-02-25',640.0);
+insert into wyplaty values(25,20,'1992-09-06','1992-09-07',340.0);
+insert into wyplaty values(25,22,'1984-04-24','1984-04-25',710.0);
+insert into wyplaty values(25,24,'1986-09-21','1986-09-22',220.0);
+insert into wyplaty values(25,39,'1988-04-09','1988-04-10',270.0);
+insert into wyplaty values(26,2,'1990-03-16','1990-03-17',560.0);
+insert into wyplaty values(26,6,'1986-03-25','1986-03-26',700.0);
+insert into wyplaty values(26,17,'1987-09-02','1987-09-03',490.0);
+insert into wyplaty values(26,17,'1987-10-02','1987-10-03',460.0);
+insert into wyplaty values(26,24,'1986-09-21','1986-09-22',600.0);
+insert into wyplaty values(26,103,'1987-07-12','1987-07-13',320.0);
+insert into wyplaty values(26,106,'1988-03-04','1988-03-05',260.0);
+insert into wyplaty values(27,4,'1983-04-05','1983-04-06',810.0);
+insert into wyplaty values(27,15,'1983-09-06','1983-09-07',710.0);
+insert into wyplaty values(27,15,'1983-11-06','1983-11-07',640.0);
+insert into wyplaty values(27,18,'1986-07-23','1986-07-24',580.0);
+insert into wyplaty values(27,22,'1984-04-24','1984-04-25',770.0);
+insert into wyplaty values(27,24,'1986-09-21','1986-09-22',480.0);
+insert into wyplaty values(27,25,'1985-05-23','1985-05-24',850.0);
+insert into wyplaty values(29,6,'1986-03-25','1986-03-26',250.0);
+insert into wyplaty values(29,8,'1992-05-09','1992-05-10',780.0);
+insert into wyplaty values(29,16,'1984-02-24','1984-02-25',610.0);
+insert into wyplaty values(29,24,'1986-09-21','1986-09-22',590.0);
+insert into wyplaty values(29,25,'1985-05-23','1985-05-24',760.0);
+insert into wyplaty values(29,102,'1987-07-02','1987-07-03',270.0);
+insert into wyplaty values(29,104,'1990-01-19','1990-01-20',230.0);
+insert into wyplaty values(30,4,'1983-04-05','1983-04-06',490.0);
+insert into wyplaty values(30,10,'1983-12-26','1983-12-27',290.0);
+insert into wyplaty values(30,22,'1984-04-24','1984-04-25',480.0);
+insert into wyplaty values(30,24,'1986-09-21','1986-09-22',700.0);
+insert into wyplaty values(30,24,'1986-10-21','1986-10-22',320.0);
+insert into wyplaty values(30,40,'1987-02-28','1987-03-01',3240.0);
+insert into wyplaty values(30,40,'1987-04-28','1987-04-29',1760.0);
+insert into wyplaty values(30,104,'1990-01-19','1990-01-20',510.0);
+insert into wyplaty values(30,105,'1991-03-15','1991-03-16',400.0);
+insert into wyplaty values(30,105,'1991-06-15','1991-06-16',810.0);
+insert into wyplaty values(31,2,'1990-03-16','1990-03-17',500.0);
+insert into wyplaty values(31,17,'1987-09-02','1987-09-03',2340.0);
+insert into wyplaty values(31,31,'1985-04-16','1985-04-17',1000.0);
+insert into wyplaty values(31,100,'1985-01-16','1985-01-17',56700.0);
+insert into wyplaty values(32,10,'1983-12-26','1983-12-27',800.0);
+insert into wyplaty values(32,22,'1984-04-24','1984-04-25',55555.0);
+insert into wyplaty values(33,1,'1990-01-16','1990-01-17',880.0);
+insert into wyplaty values(33,8,'1992-05-09','1992-05-10',1000.0);
+insert into wyplaty values(33,18,'1986-07-23','1986-07-24',500.0);
+insert into wyplaty values(34,22,'1984-04-24','1984-04-25',3000.0);
+insert into wyplaty values(34,30,'1986-11-20','1986-11-21',900.0);
+insert into wyplaty values(35,10,'1983-12-26','1983-12-27',6700.0);
+insert into wyplaty values(36,5,'1987-05-05','1987-05-06',340.0);
+insert into wyplaty values(36,10,'1983-12-26','1983-12-27',460.0);
+insert into wyplaty values(36,40,'1987-02-28','1987-03-01',760.0);
+insert into wyplaty values(36,40,'1987-05-28','1987-05-29',610.0);
+insert into wyplaty values(37,10,'1983-12-26','1983-12-27',600.0);
+insert into wyplaty values(37,40,'1987-02-28','1987-03-01',230.0);
+insert into wyplaty values(37,101,'1988-10-30','1988-10-31',270.0);
+insert into wyplaty values(40,31,'1985-04-16','1985-04-17',5.0);
+insert into wyplaty values(41,31,'1985-04-16','1985-04-17',4.0);
+insert into zespoly values(1,'OPROGRAMOWANIE',1,1);
+insert into zespoly values(2,'TEORIA INFORMATYKI',2,1);
+insert into zespoly values(3,'SIECI KOMPUTEROWE ',3,1);
+insert into zespoly values(4,'BUDOWA',4,1);
+insert into zespoly values(5,'AUTOMATY',25,3);
+insert into zespoly values(6,'BUDOWA KOPARKI',10,5);
+insert into zespoly values(7,'PIECE ',21,6);
+insert into zespoly values(8,'WEGIEL',29,5);
+insert into zespoly values(9,'KONSTRUKCJA ',33,5);
+insert into zespoly values(10,'LIKWIDACJA',21,6);
+insert into zespoly values(11,'POZIOMZEROWY',37,5);
