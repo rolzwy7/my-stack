@@ -9,6 +9,7 @@
 - [Python](#python)
 - [GitHub](#github)
 - [Anaconda](#anaconda)
+- [PyPi](#pypi)
 - [Other](#other)
 
 ---
@@ -25,6 +26,10 @@
 ## Anaconda
 
 - [Manage environments](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
+
+## PyPi
+
+- [Packaging](https://packaging.python.org/)
 
 ## Other
 
