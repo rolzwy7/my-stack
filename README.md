@@ -22,6 +22,7 @@
 
 - [gitignore.io](https://www.gitignore.io) - generate .gitignore file
 - [dillinger.io](https://dillinger.io) - markdown online editor
+- [stackedit.io](https://stackedit.io) - markdown online editor
 
 ## Anaconda
 
