@@ -1,0 +1,518 @@
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+#define DEFSEC_ConfigPortAsOutput(PortName, InitVal) DDR ## PortName=0xff;\
+PORT ## PortName=InitVal;
+
+#define DEFSEC_ConfigPortPinAsOutput(PortName, PinNo) DDR ## PortName|=(1<<PinNo);
+#define DEFSIG_LCD_E_Low		PORTA&=~(1<<PA0)
+#define DEFSIG_LCD_E_High		PORTA|=(1<<PA0)
+#define DEFSIG_LCD_RS_Command	PORTA&=~(1<<PA1)
+#define DEFSIG_LCD_RS_Data		PORTA|=(1<<PA1)
+
+#define DEFCMD_LCD_FunctionSet	(1<<5)
+#define DEFSET_LCD_DataLength8	(1<<4)
+#define DEFSET_LCD_2Lines		(1<<3)
+#define DEFSET_LCD_FontSize5x8	(0<<2)
+
+#define DEFCMD_LCD_DisplayControl	(1<<3)
+#define DEFSET_LCD_DisplayOn		(1<<2)
+#define DEFSET_LCD_CursorOff		(0<<1)
+#define DEFSET_LCD_CursorOn			(1<<1)
+#define DEFSET_LCD_BlinkingOff		(0<<0)
+#define DEFSET_LCD_BlinkingOn		(1<<0)
+#define DEFCMD_LCD_ClearDisplay		(1<<0)
+#define DEFCMD_LCD_ReturnHome		(1<<1)
+
+#define DEFCMD_LCD_EntryMode		(1<<2)
+#define DEFSET_LCD_CursorMoveDirInc	(1<<1)
+#define DEFSET_LCD_CursorMoveDirDec	(0<<1)
+
+#define DEFCMD_LCD_SetDDRAMAddress	(1<<7)
+
+#define DEFCMD_LCD_CurDispShift		(1<<4)
+#define DEFSET_LCD_DisplayShift		(1<<3)
+#define DEFSET_LCD_CursorShift		(0<<3)
+#define DEFSET_LCD_ShiftLeft		(0<<2)
+#define DEFSET_LCD_ShiftRight		(1<<2)
+
+#define DEFCMD_LCD_SetCGRAMAddress	(1<<6)
+
+uint8_t VAR_String1[] = "nacisnieto P1";
+uint8_t VAR_String2[] = "nacisnieto P2";
+uint8_t VAR_String3[] = "nacisnieto P3";
+uint8_t VAR_String4[] = "nacisnieto P4";
+uint8_t VAR_StringLicznik[] = "000";
+uint8_t VAR_StringReset[] = "            ";
+#define DEFVAL_CharSi	0
+
+const uint8_t
+Const_CharSi[8] = {
+	0b00000000,
+	0b00000100,
+	0b00101110,
+	0b01000000,
+	0b00111110,
+	0b00000001,
+	0b00111110,
+	0b00000000
+};
+
+// Button state
+volatile uint8_t key_state_1 = 0;
+volatile uint8_t key_state_2 = 0;
+volatile uint8_t key_state_3 = 0;
+volatile uint8_t key_state_4 = 0;
+
+volatile uint8_t stop_licznik = 0;
+// 0 - sprawdza czy wcisniety
+// 1 - sprawdza czy na pewno wcisniety
+// 2 - wcisniety
+// 3 - sprawdza czy odcisniety
+// 4 - sparwdza czy na pewno odcisniety
+
+void Fun_LCD_Write(uint8_t ParByte){
+	PORTB = ParByte;
+	DEFSIG_LCD_E_High;
+	_delay_us(10);
+	DEFSIG_LCD_E_Low;
+}
+
+
+void Fun_LCD_init(void){
+	// interface configuration
+	DEFSEC_ConfigPortAsOutput(B, 0);
+	DEFSEC_ConfigPortPinAsOutput(A, 0);
+	DEFSEC_ConfigPortPinAsOutput(A, 1);
+	DEFSIG_LCD_E_Low;
+	// reset sequence
+	DEFSIG_LCD_RS_Command;
+	_delay_ms(41);
+	Fun_LCD_Write(0b00110000);
+	_delay_ms(5);
+	Fun_LCD_Write(0b00110000);
+	_delay_us(110);
+	Fun_LCD_Write(0b00110000);
+	_delay_us(110);
+	// display configuration
+	DEFSIG_LCD_RS_Command;
+	Fun_LCD_Write(
+	DEFCMD_LCD_FunctionSet
+	|DEFSET_LCD_DataLength8
+	|DEFSET_LCD_2Lines
+	|DEFSET_LCD_FontSize5x8
+	);
+	_delay_us(40);
+	Fun_LCD_Write(
+	DEFCMD_LCD_DisplayControl
+	|DEFSET_LCD_DisplayOn
+	|DEFSET_LCD_CursorOff
+	|DEFSET_LCD_BlinkingOff
+	);
+	_delay_us(40);
+	Fun_LCD_Write(DEFCMD_LCD_ClearDisplay);
+	_delay_us(40);
+	Fun_LCD_Write(DEFCMD_LCD_ReturnHome);
+	_delay_ms(2);
+	Fun_LCD_Write(
+	DEFCMD_LCD_EntryMode
+	|DEFSET_LCD_CursorMoveDirInc
+	);
+	_delay_us(40);
+	Fun_LCD_Write(DEFCMD_LCD_SetDDRAMAddress|0x00);
+	_delay_us(40);
+}
+
+void Fun_DisplayStringAtPosition(
+uint8_t* Par_Ptr,
+uint8_t Par_ByteCount,
+int8_t Par_Line,
+int8_t Par_Position
+){
+	// cursor position
+	if((Par_Line != -1) && (Par_Position != -1)){
+		DEFSIG_LCD_RS_Command;
+		Fun_LCD_Write(DEFCMD_LCD_SetDDRAMAddress
+		|((Par_Line==1?0x00:0x40)+Par_Position));
+		_delay_us(40);
+	}
+	// content sending
+	DEFSIG_LCD_RS_Data;
+	while (Par_ByteCount--) {
+		Fun_LCD_Write(*(Par_Ptr++));
+		_delay_us(40);
+	}
+	//
+	//Fun_LCD_Write(*Par_Ptr);
+}
+
+void Fun_LCD_ShiftDisplayWindow(uint8_t Par_Direction) {
+	DEFSIG_LCD_RS_Command;
+	Fun_LCD_Write(
+	DEFCMD_LCD_CurDispShift
+	|DEFSET_LCD_DisplayShift
+	|Par_Direction
+	);
+	_delay_us(40);
+}
+
+void Fun_WriteCharFontToCGRAM(const uint8_t* ParPattern, uint8_t ParAddr) {
+	DEFSIG_LCD_RS_Command;
+	Fun_LCD_Write(
+	DEFCMD_LCD_SetCGRAMAddress | (ParAddr << 3)
+	);
+	_delay_us(40);
+	DEFSIG_LCD_RS_Data;
+	uint8_t LocVar_Index;
+	for(LocVar_Index = 0; LocVar_Index<8; LocVar_Index++){
+		Fun_LCD_Write(ParPattern[LocVar_Index]);
+		_delay_us(40);
+	}
+}
+
+ISR(TIMER0_COMP_vect) {
+	static uint8_t cnt = 0;
+	
+	//Fun_DisplayStringAtPosition(VAR_StringLicznik, 3, 1, 0);
+	
+	
+	if(++cnt > 120) {
+	
+	if(stop_licznik != 1) {
+		Fun_DisplayStringAtPosition(VAR_StringLicznik, 3, 1, 0);
+		if(VAR_StringLicznik[2] == 57) {
+			VAR_StringLicznik[2] = 48;
+			
+			if(VAR_StringLicznik[1] == 57) {
+				VAR_StringLicznik[1] = 48;
+				
+				if(VAR_StringLicznik[0] == 57) {
+					VAR_StringLicznik[0] = 48;
+					VAR_StringLicznik[1] = 48;
+					VAR_StringLicznik[2] = 48;
+					
+					
+					} else {
+					++VAR_StringLicznik[0];
+				}
+				
+				
+				} else {
+				++VAR_StringLicznik[1];
+			}
+			
+			} else {
+			++VAR_StringLicznik[2];
+		}
+	}
+
+	cnt = 0;
+	}
+
+
+	// Obsługa przycisku 1
+	switch (key_state_1) {
+		case 0:
+		if((PINC & 0x01) == 0) key_state_1 = 1;
+		break;
+
+		case 1:
+		if((PINC & 0x01) == 0)
+		key_state_1 = 2;
+		else
+		key_state_1 = 0;
+		break;
+
+		case 2: break;
+
+		case 3:
+		//
+		if((PINC & 0x01) != 0) key_state_1 = 4;
+		break;
+
+		case 4:
+		//
+		if((PINC & 0x01) != 0)
+		key_state_1 = 0;
+		else
+		key_state_1 = 3;
+		break;
+
+		default:
+		key_state_1=0;
+		break;
+	}
+	// Obsługa przycisku 2
+	switch (key_state_2) {
+		case 0:
+		if((PINC & 0x02) == 0) key_state_2 = 1;
+		break;
+
+		case 1:
+		if((PINC & 0x02) == 0)
+		key_state_2 = 2;
+		else
+		key_state_2 = 0;
+		break;
+
+		case 2: break;
+
+		case 3:
+		//
+		if((PINC & 0x02) != 0) key_state_2 = 4;
+		break;
+
+		case 4:
+		//
+		if((PINC & 0x02) != 0)
+		key_state_2 = 0;
+		else
+		key_state_2 = 3;
+		break;
+
+		default:
+		key_state_2=0;
+		break;
+	}
+	// Obsługa przycisku 3
+	switch (key_state_3) {
+		case 0:
+		if((PINC & 0x04) == 0)key_state_3 = 1;
+		break;
+
+		case 1:
+		if((PINC & 0x04) == 0)
+		key_state_3 = 2;
+		else
+		key_state_3 = 0;
+		break;
+
+		case 2: break;
+
+		case 3:
+		//
+		if((PINC & 0x04) != 0) key_state_3 = 4;
+		break;
+
+		case 4:
+		//
+		if((PINC & 0x04) != 0)
+		key_state_3 = 0;
+		else
+		key_state_3 = 3;
+		break;
+
+		default:
+		key_state_3=0;
+		break;
+	}
+	// Obsługa przycisku 4
+	switch (key_state_4) {
+		case 0:
+		if((PINC & 0x08) == 0)key_state_4 = 1;
+		break;
+
+		case 1:
+		if((PINC & 0x08) == 0)
+		key_state_4 = 2;
+		else
+		key_state_4 = 0;
+		break;
+
+		case 2: break;
+
+		case 3:
+		//
+		if((PINC & 0x08) != 0) key_state_4 = 4;
+		break;
+
+		case 4:
+		//
+		if((PINC & 0x08) != 0)
+		key_state_4 = 0;
+		else
+		key_state_4 = 3;
+		break;
+
+		default:
+		key_state_3=0;
+		break;
+	}
+}
+
+
+int main(void) {
+	TCCR0 |= (1 << WGM01);
+	TCCR0 |= (1 << CS02) | (1 << CS00);
+	OCR0 = 100;
+	TIMSK |= (1 << OCIE0);
+	sei();
+	
+	PORTC |= 0b00001111;
+	
+	Fun_LCD_init();
+	Fun_WriteCharFontToCGRAM(Const_CharSi, DEFVAL_CharSi);
+	//Fun_DisplayStringAtPosition(VAR_String1, 13, 1, 0);
+	//Fun_DisplayStringAtPosition(VAR_String2, 26, 2, 0);
+	while (1) {
+		uint8_t LocVar_ShiftIndex;
+		
+		if(key_state_1 == 2) {
+			Fun_DisplayStringAtPosition(VAR_StringReset, 13, 1, 0);
+			Fun_DisplayStringAtPosition(VAR_String1, 13, 1, 0);
+			key_state_1 = 3;
+		}
+		if(key_state_2 == 2) {
+			Fun_DisplayStringAtPosition(VAR_StringReset, 13, 1, 0);
+			Fun_DisplayStringAtPosition(VAR_String2, 13, 1, 0);
+			key_state_2 = 3;
+		}
+		if(key_state_3 == 2) {
+			stop_licznik = (stop_licznik == 1) ? 0 : 1;
+			if(stop_licznik == 0) {
+				Fun_DisplayStringAtPosition(VAR_StringReset, 13, 1, 0);
+			}
+			key_state_3 = 3;
+		}
+		if(key_state_4 == 2) {
+			VAR_StringLicznik[0] = 48;
+			VAR_StringLicznik[1] = 48;
+			VAR_StringLicznik[2] = 48;
+			key_state_4 = 3;
+		}
+		
+		/*
+		for (LocVar_ShiftIndex = 0; LocVar_ShiftIndex<6; LocVar_ShiftIndex++) {
+			Fun_LCD_ShiftDisplayWindow(DEFSET_LCD_ShiftLeft);
+			_delay_ms(700);
+		}*/
+/*
+		for (LocVar_ShiftIndex = 0; LocVar_ShiftIndex<10; LocVar_ShiftIndex++) {
+			Fun_LCD_ShiftDisplayWindow(DEFSET_LCD_ShiftRight);
+			_delay_ms(1000);
+		}*/
+	}
+}
+
+/*
+
+#include <avr/io.h>
+#define F_CPU 16000000UL
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+// PORTB - steruje ktory wyswietlacz ma sie swiecic
+// PORTA - zaswieca wyswietlacze
+
+// 7seg codes
+uint8_t seg7[] = {
+	0b11000000,
+	0b11111001,
+	0b10100100,
+	0b10110000,
+	0b10011001,
+	0b10010010,
+	0b10000010,
+	0b11111000,
+	0b10000000,
+	0b10010000
+};
+
+// Dynamic 7seg
+volatile uint8_t LED[4];
+// Button state
+volatile uint8_t key_state = 0;
+// 0 - sprawdza czy wcisniety
+// 1 - sprawdza czy na pewno wcisniety
+// 2 - wcisniety
+// 3 - sprawdza czy odcisniety
+// 4 - sparwdza czy na pewno odcisniety
+
+// displayed number
+uint16_t segs = 5678;
+
+ISR(TIMER0_COMP_vect) {
+	static uint8_t cnt = 0;
+
+
+	PORTB |= 0x0F;
+	PORTA = LED[cnt];
+	PORTB &= ~(1 << cnt);
+
+	// 4 wyswietlacze
+	if(++cnt > 3) {
+		cnt = 0;
+	}
+
+	// Obsługa przycisku
+	switch (key_state) {
+		case 0:
+		if((PINC & 0x01) == 0) key_state = 1;
+		break;
+
+		case 1:
+		if((PINC & 0x01) == 0)
+		key_state = 2;
+		else
+		key_state = 0;
+		break;
+
+		case 2: break;
+
+		case 3:
+		//
+		if((PINC & 0x01) != 0) key_state = 4;
+		break;
+
+		case 4:
+		//
+		if((PINC & 0x01) != 0)
+		key_state = 0;
+		else
+		key_state = 3;
+		break;
+
+		default:
+		key_state=0;
+		break;
+	}
+
+}
+
+int main(void) {
+	// init - start
+	TCCR0 |= (1 << WGM01);
+	TCCR0 |= (1 << CS02) | (1 << CS00);
+	OCR0 = 50;
+	TIMSK |= (1 << OCIE0);
+	sei();
+	// init - end
+
+	DDRA = 0xFF;
+	PORTA = 0b00000000;
+
+	DDRB = 0x0F;
+
+	PORTC |= 0b00000001;
+
+	while (1) {
+		uint16_t temp = segs;
+
+		// wyswietla liczbe segs na wysiwetlaczach
+		LED[0] = seg7[temp/1000]; temp = temp % 1000;
+		LED[1] = seg7[temp/100]; temp = temp % 100;
+		LED[2] = seg7[temp/10]; temp = temp % 10;
+		LED[3] = seg7[temp];
+
+		//
+		if(key_state == 2) {
+			segs++;
+			key_state = 3;
+		}
+
+	}
+
+}
+*/
