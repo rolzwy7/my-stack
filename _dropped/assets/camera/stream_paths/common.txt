@@ -1,0 +1,10 @@
+mjpeg
+cgi-bin/view.cgi?chn=[CHANNEL]&u=[USERNAME]&p=[PASSWORD]
+video.cgi?resolution=VG
+user=admin_password=tlJwpbo6_channel=1_stream=0.sdp
+cgi-bin/snapshot.cgi?chn=[CHANNEL]&u=[USERNAME]&p=[PASSWORD]
+cgi-bin/snapshot.cgi?loginuse=[USERNAME]&loginpas=[PASSWORD]
+mjpeg?res=full&x0=0&y0=0&x1=100%&y1=100%&quality=12&doublescan=0
+get_params.cgi
+videostream.asf?user=[USERNAME]&pwd=[PASSWORD]&resolution=[WIDTH]x[HEIGHT]
+snapshot.jpg?user=[USERNAME]&pwd=[PASSWORD]&strm=[CHANNEL]

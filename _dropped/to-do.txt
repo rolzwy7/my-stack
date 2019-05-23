@@ -1,0 +1,6 @@
+add logger
+assertion exceptions
+shinobi.video ?
+ctrl+c - stop run
+set - load from db
+set - load from file

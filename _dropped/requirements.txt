@@ -1,0 +1,4 @@
+requests
+texttable
+shodan
+pymongo
