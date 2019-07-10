@@ -1,0 +1,12 @@
+Export:
+  conda env export > environment.yml
+
+Delete:
+  conda remove --name myenv --all
+
+Create:
+  conda env create -f environment.yml
+
+List/Show:
+  conda env list       (list envs)
+  conda list -n myenv  (list pckgs)
