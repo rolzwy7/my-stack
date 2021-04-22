@@ -1,86 +1,54 @@
 import * as d3 from "d3";
 
-var margin = { top: 30, right: 30, bottom: 85, left: 85 };
-var width = 400;
-var height = 400;
+// set the dimensions and margins of the graph
+var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+    width = 900 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
 
+// append the svg object to the body of the page
 var svg = d3.select("#dataid")
     .append("svg")
-    // .style("background-color", "red")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
+    .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
 
-// X axis
-var x = d3.scaleLinear()
-    .domain([0, 4e3])
-    .range([0, width])
-    .nice()
-
-// X axis label
-svg.append("text")
-    .attr("text-anchor", "end")
-    .attr("x", width / 2 + margin.left)
-    .attr("y", height + margin.top + 20)
-    .text("Sepal Length");
-
-svg.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(x))
-
-// Y axis
-var y = d3.scaleLinear()
-    .domain([0, 500e3])
-    .range([height, 0])
-    .nice()
-
-// Y axis label
-svg.append("text")
-    .attr("text-anchor", "end")
-    .attr("transform", "rotate(-90)")
-    .attr("y", -margin.left + 20)
-    .attr("x", -margin.top - height / 2 + 20)
-    .text("Sale Price")
-
-svg.append("g")
-    .call(d3.axisLeft(y))
+//Read the data
 
 
-// var color = d3.scaleOrdinal()
-//     .domain(["setosa", "versicolor", "virginica"])
-//     .range(["#F8766D", "#00BA38", "#619CFF"])
+d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv").then(
+    function (_data) {
+        var data = _data.map((d) => ({ date: d3.timeParse("%Y-%m-%d")(d.date), value: d.value }));
+        // Add X axis --> it is a date format
+        var x = d3.scaleTime()
+            .domain(
+                d3.extent(data, function (d) { return d.date; }) // computes min and max (time)
+            )
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x));
 
-const url = "https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/2_TwoNum.csv";
-// d3.csv(url, function (data) {
-//     // console.log(data.GrLivArea);
-//     document.querySelector("#seq").appendChild(document.createTextNode(data.GrLivArea))
-//     svg.append("g")
-//         .selectAll("dot")
-//         .data(data)
-//         .enter()
-//         .append("circle")
-//         .attr("cx", (d) => x(d.GrLivArea))
-//         .attr("cy", (d) => y(d.SalePrice))
-//         .attr("r", 5)
-//         .style("fill", "#69b3a2")
-// })
-d3.csv(url).then(function (data) {
-    svg.append("g")
-        .selectAll("dot")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", (d) => x(d.GrLivArea))
-        .attr("cy", (d) => y(d.SalePrice))
-        .attr("r", 1.7)
-        .style("fill", function (d) {
-            if (d.SalePrice < 150e3) {
-                return "green";
-            } else if (d.SalePrice >= 150e3 && d.SalePrice < 300e3) {
-                return "orange";
-            } else if (d.SalePrice >= 300e3) {
-                return "red";
-            }
-        })
-})
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function (d) { return +d.value; })])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Add the line
+        svg.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(function (d) { return x(d.date) })
+                .y(function (d) { return y(d.value) })
+            )
+    }
+)
+
+
+
